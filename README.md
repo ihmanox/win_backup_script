@@ -29,19 +29,20 @@ Abre PowerShell como Administrador:
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-Si no te funcion usa: 
-
-```powershell
-powershell -ExecutionPolicy Bypass -File "C:\Users\Brian\Desktop\backup.ps1"
-```
-
 ### 3. Ejecutar
 
 ```powershell
 .\backup.ps1
 ```
 
-O simplemente: **Clic derecho** → **Ejecutar con PowerShell**
+O simplemente: **Clic derecho** → **Ejecutar con PowerShell**.
+
+### Si no te funcion usa: 
+
+```powershell
+powershell -ExecutionPolicy Bypass -File "C:\Users\Brian\Desktop\backup.ps1"
+```
+
 
 ## 📁 Carpetas Respaldadas
 
