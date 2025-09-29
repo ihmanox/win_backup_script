@@ -1,4 +1,4 @@
-# 💾 Windows Universal Backup Script
+# 💾 Windows Backup Script Utility
 
 Herramienta profesional de backup automatizado para Windows con detección inteligente de discos externos, numeración automática y exclusiones configurables.
 
@@ -29,7 +29,7 @@ Herramienta profesional de backup automatizado para Windows con detección intel
 3. Navega a la ubicación del script y ejecútalo:
    ```powershell
    cd C:\ruta\del\script
-   .\backup_universal.ps1
+   .\backup.ps1
    ```
 
 4. El script:
