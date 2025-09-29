@@ -29,6 +29,12 @@ Abre PowerShell como Administrador:
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
+Si no te funcion usa: 
+
+```powershell
+powershell -ExecutionPolicy Bypass -File "C:\Users\Brian\Desktop\backup.ps1"
+```
+
 ### 3. Ejecutar
 
 ```powershell
