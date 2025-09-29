@@ -1,13 +1,13 @@
 # ========================================
-# SCRIPT DE BACKUP AUTOMÁTICO COMPLETO
+# SCRIPT DE BACKUP AUTOMATICO COMPLETO
 # ========================================
 
-# CONFIGURACIÓN - MODIFICA ESTAS VARIABLES
-$DiscoDestino = "E:"  # Cambia por la letra de tu disco HDD (E:, F:, D:, etc.)
+# CONFIGURACION - MODIFICA ESTAS VARIABLES
+$DiscoDestino = "D:"  # Cambia por la letra de tu disco HDD (E:, F:, D:, etc.)
 $NombreCarpetaBackup = "Backup001"
 
 # ========================================
-# NO MODIFICAR A PARTIR DE AQUÍ
+# NO MODIFICAR A PARTIR DE AQUI
 # ========================================
 
 # Obtener el usuario actual
@@ -19,9 +19,9 @@ $RutaDestino = Join-Path $DiscoDestino $NombreCarpetaBackup
 # Crear carpeta de backup si no existe
 if (!(Test-Path $RutaDestino)) {
     New-Item -ItemType Directory -Path $RutaDestino -Force | Out-Null
-    Write-Host "✓ Carpeta de backup creada: $RutaDestino" -ForegroundColor Green
+    Write-Host "Carpeta de backup creada: $RutaDestino" -ForegroundColor Green
 } else {
-    Write-Host "✓ Usando carpeta existente: $RutaDestino" -ForegroundColor Yellow
+    Write-Host "Usando carpeta existente: $RutaDestino" -ForegroundColor Yellow
 }
 
 # Definir carpetas a respaldar
@@ -37,11 +37,14 @@ $CarpetasARespaldar = @(
     @{Nombre="Enlaces"; Ruta="$env:USERPROFILE\Links"}
 )
 
-Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  INICIANDO BACKUP COMPLETO" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host ""
 Write-Host "Usuario: $Usuario" -ForegroundColor White
-Write-Host "Destino: $RutaDestino`n" -ForegroundColor White
+Write-Host "Destino: $RutaDestino" -ForegroundColor White
+Write-Host ""
 
 $TotalCarpetas = 0
 $CarpetasExitosas = 0
@@ -56,32 +59,22 @@ foreach ($Carpeta in $CarpetasARespaldar) {
     
     if (Test-Path $Origen) {
         try {
-            # Usar robocopy para copiar (más eficiente y robusto)
-            # /E = copia subdirectorios incluidos vacíos
-            # /XO = excluye archivos más antiguos
-            # /R:3 = reintentos en caso de error
-            # /W:5 = tiempo de espera entre reintentos
-            # /NFL = no muestra lista de archivos
-            # /NDL = no muestra lista de directorios
-            # /NP = no muestra progreso de porcentaje
-            
             $resultado = robocopy "$Origen" "$Destino" /E /XO /R:3 /W:5 /NFL /NDL /NP
             
-            # Robocopy devuelve códigos: 0-7 son exitosos, 8+ son errores
             if ($LASTEXITCODE -lt 8) {
-                Write-Host "  ✓ Completado: $($Carpeta.Nombre)" -ForegroundColor Green
+                Write-Host "  Completado: $($Carpeta.Nombre)" -ForegroundColor Green
                 $CarpetasExitosas++
             } else {
-                Write-Host "  ⚠ Advertencia en: $($Carpeta.Nombre)" -ForegroundColor Yellow
+                Write-Host "  Advertencia en: $($Carpeta.Nombre)" -ForegroundColor Yellow
                 $CarpetasExitosas++
             }
         }
         catch {
-            Write-Host "  ✗ Error al copiar: $($Carpeta.Nombre)" -ForegroundColor Red
+            Write-Host "  Error al copiar: $($Carpeta.Nombre)" -ForegroundColor Red
             Write-Host "    Detalle: $($_.Exception.Message)" -ForegroundColor Red
         }
     } else {
-        Write-Host "  ⊘ No existe: $($Carpeta.Nombre)" -ForegroundColor DarkGray
+        Write-Host "  No existe: $($Carpeta.Nombre)" -ForegroundColor DarkGray
         $CarpetasOmitidas++
     }
     Write-Host ""
@@ -100,30 +93,34 @@ Usuario: $Usuario
 Destino: $RutaDestino
 
 RESUMEN:
-- Total de carpetas procesadas: $TotalCarpetas
-- Copias exitosas: $CarpetasExitosas
-- Carpetas omitidas (no existen): $CarpetasOmitidas
+Total de carpetas procesadas: $TotalCarpetas
+Copias exitosas: $CarpetasExitosas
+Carpetas omitidas (no existen): $CarpetasOmitidas
 
 CARPETAS RESPALDADAS:
 "@
 
 foreach ($Carpeta in $CarpetasARespaldar) {
     if (Test-Path $Carpeta.Ruta) {
-        $LogContenido += "`n✓ $($Carpeta.Nombre) - $($Carpeta.Ruta)"
+        $LogContenido += "`n[OK] $($Carpeta.Nombre) - $($Carpeta.Ruta)"
     } else {
-        $LogContenido += "`n⊘ $($Carpeta.Nombre) - NO EXISTE"
+        $LogContenido += "`n[NO EXISTE] $($Carpeta.Nombre)"
     }
 }
 
 $LogContenido | Out-File -FilePath $ArchivoLog -Encoding UTF8
 
 # Resumen final
-Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  BACKUP COMPLETADO" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host ""
 Write-Host "Carpetas exitosas: $CarpetasExitosas/$TotalCarpetas" -ForegroundColor Green
 Write-Host "Carpetas omitidas: $CarpetasOmitidas" -ForegroundColor Yellow
-Write-Host "`nLog guardado en: $ArchivoLog" -ForegroundColor White
-Write-Host "`nPresiona cualquier tecla para salir..." -ForegroundColor Gray
+Write-Host ""
+Write-Host "Log guardado en: $ArchivoLog" -ForegroundColor White
+Write-Host ""
+Write-Host "Presiona cualquier tecla para salir..." -ForegroundColor Gray
 
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
