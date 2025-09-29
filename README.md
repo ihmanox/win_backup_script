@@ -1,111 +1,227 @@
-# 💾 Windows Backup Script
+# 💾 Windows Universal Backup Script
 
-Sistema de respaldo automático incremental para Windows que protege tus archivos importantes de manera eficiente.
+Herramienta profesional de backup automatizado para Windows con detección inteligente de discos externos, numeración automática y exclusiones configurables.
 
 ## ✨ Características
 
-- 🔄 **Backup incremental** - Solo copia archivos nuevos o modificados
-- 📁 **Respaldo completo** - Escritorio, Documentos, Imágenes, Videos, Música, Descargas y más
-- 📊 **Logs automáticos** - Registro detallado de cada operación
-- ⚡ **Optimizado** - Ahorra tiempo y espacio en ejecuciones posteriores
-- ⏰ **Automatizable** - Compatible con el Programador de Tareas de Windows
+- 🔍 **Detección automática de discos externos** - Identifica y selecciona dispositivos USB/HDD automáticamente
+- 🔢 **Numeración inteligente** - Crea backups con formato `NOMBREPC_Backup001`, `NOMBREPC_Backup002` sin sobrescribir
+- 🚀 **Copia multi-thread** - Utiliza robocopy con 8 hilos para máxima velocidad
+- 🎯 **Exclusiones inteligentes** - Omite automáticamente `node_modules`, `.git`, archivos temporales y carpetas innecesarias
+- 📊 **Logs detallados** - Genera registros con fecha, hora y estadísticas completas
+- 🎨 **Interfaz visual** - Códigos de color y símbolos para seguimiento del progreso
+- ✅ **Seguro** - Nunca sobrescribe backups anteriores, valida espacio disponible
 
-## 🚀 Inicio Rápido
+## 📋 Requisitos
 
-### 1. Configuración
+- Windows 10/11 o Windows Server 2016+
+- PowerShell 5.1+ (incluido por defecto)
+- Permisos de administrador
+- Disco externo para almacenar backups
 
-Edita estas variables al inicio del script:
+## 🚀 Uso
 
-```powershell
-$DiscoDestino = "E:"              # Letra de tu disco HDD
-$NombreCarpetaBackup = "Backup001" # Nombre de la carpeta destino
-```
+1. Conecta tu disco externo (USB, HDD externo, etc.)
 
-### 2. Habilitar ejecución
+2. Abre PowerShell como Administrador:
+   - Presiona `Win + X` → Selecciona "Windows PowerShell (Admin)"
 
-Abre PowerShell como Administrador:
+3. Navega a la ubicación del script y ejecútalo:
+   ```powershell
+   cd C:\ruta\del\script
+   .\backup_universal.ps1
+   ```
 
-```powershell
-Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-### 3. Ejecutar
-
-```powershell
-.\backup.ps1
-```
-
-O simplemente: **Clic derecho** → **Ejecutar con PowerShell**.
-
-### Si no te funcion usa: 
-
-```powershell
-powershell -ExecutionPolicy Bypass -File "C:\Users\Brian\Desktop\backup.ps1"
-```
-
+4. El script:
+   - Detectará automáticamente discos externos
+   - Mostrará información detallada (modelo, capacidad, espacio libre)
+   - Seleccionará automáticamente si solo hay un disco externo
+   - Te pedirá confirmación antes de iniciar
 
 ## 📁 Carpetas Respaldadas
 
-- 📄 Documentos
-- 🖼️ Imágenes  
+Por defecto, el script respalda estas carpetas del usuario actual:
+
+- 📂 Escritorio (Desktop)
+- 📄 Documentos (Documents)
+- 🖼️ Imágenes (Pictures)
 - 🎬 Videos
-- 🎵 Música
-- ⬇️ Descargas
-- 🖥️ Escritorio
-- 🎨 Objetos 3D
-- ⭐ Favoritos
-- 🔗 Enlaces
+- 🎵 Música (Music)
+- ⬇️ Descargas (Downloads)
+- ⭐ Favoritos (Favorites)
 
-## ⏰ Automatización (Opcional)
+## 🚫 Exclusiones Automáticas
 
-Para backup automático semanal (ej: Domingos 11:59 PM):
+### Carpetas excluidas
 
-1. Abre **Programador de Tareas** (`Win + R` → `taskschd.msc`)
-2. **Crear tarea básica**
-3. Configurar:
-   - **Desencadenador**: Semanal → Domingo → 23:59
-   - **Acción**: Iniciar programa
-   - **Programa**: `powershell.exe`
-   - **Argumentos**: `-ExecutionPolicy Bypass -WindowStyle Hidden -File "C:\ruta\backup.ps1"`
+- `node_modules`, `bower_components`, `vendor` - Dependencias de proyectos (npm, bower, composer)
+- `.git`, `.svn` - Repositorios de control de versiones
+- `.vscode`, `.idea` - Configuraciones de IDEs
+- `__pycache__`, `.next`, `.nuxt` - Caches de frameworks
+- `dist`, `build`, `target`, `bin`, `obj` - Carpetas de compilación
 
-## 🔄 ¿Cómo funciona el Backup Incremental?
+### Archivos excluidos
+
+- `*.tmp`, `*.temp` - Archivos temporales
+- `*.cache` - Archivos de caché
+- `Thumbs.db` - Miniaturas de Windows
+- `.DS_Store` - Archivos de macOS
+
+## 📁 Estructura Generada
 
 ```
-Primera ejecución:
-└── Copia TODO (35 GB) → 2 horas
-
-Segunda ejecución (una semana después):
-└── Solo archivos nuevos/modificados (565 MB) → 5 minutos ⚡
+D:\                                    (Disco Externo)
+├── DESKTOP_Backup001/
+│   ├── Escritorio/
+│   ├── Documentos/
+│   ├── Imagenes/
+│   ├── Videos/
+│   ├── Musica/
+│   ├── Descargas/
+│   ├── Favoritos/
+│   └── backup_log_2025-09-29_14-30-15.txt
+│
+├── DESKTOP_Backup002/
+│   └── ...
+│
+└── LAPTOP_Backup003/                 (Otra computadora)
+    └── ...
 ```
 
-Cada backup posterior solo copia lo que cambió, ahorrando tiempo y espacio.
+## ⚙️ Personalización
 
-## 📊 Logs
+### Modificar carpetas a respaldar
 
-Los logs se guardan automáticamente en:
+Edita la sección `$FoldersToBackup` en el script (línea ~290):
+
+```powershell
+$FoldersToBackup = @(
+    @{Name="Escritorio"; Path="$env:USERPROFILE\Desktop"},
+    @{Name="MiCarpeta"; Path="C:\MiCarpeta"}  # Agregar más aquí
+)
 ```
-E:\Backup001\backup_log_YYYY-MM-DD_HH-mm-ss.txt
+
+### Modificar exclusiones
+
+Edita las variables al inicio del script (líneas 10-35):
+
+```powershell
+$CARPETAS_EXCLUIDAS = @(
+    "node_modules",
+    ".git"
+    # Agregar más...
+)
+
+$EXTENSIONES_EXCLUIDAS = @(
+    "*.tmp",
+    "*.cache"
+    # Agregar más...
+)
 ```
 
 ## 🔧 Solución de Problemas
 
-| Problema | Solución |
-|----------|----------|
-| Error: "No se puede ejecutar scripts" | `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser` |
-| Error: "Acceso denegado" | Ejecutar PowerShell como Administrador |
-| Disco lleno | Libera espacio o usa un disco más grande |
-| Tarea programada no funciona | Verifica que el disco esté conectado y la ruta sea correcta |
+### Error: "No se puede ejecutar scripts"
 
-## ⚙️ Requisitos
+```powershell
+# Opción 1: Bypass temporal
+powershell -ExecutionPolicy Bypass -File .\backup_universal.ps1
 
-- Windows 10/11
-- PowerShell 5.1+ (incluido por defecto)
-- Disco externo o secundario con espacio suficiente
+# Opción 2: Cambiar política permanentemente (como admin)
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
 
-## 📝 Licencia
+### Error: "Requiere privilegios de administrador"
 
-Uso libre. Modifica y distribuye según tus necesidades.
+Ejecuta PowerShell como Administrador:
+- Click derecho en PowerShell → "Ejecutar como administrador"
+
+### Error: "No se encontraron discos externos"
+
+- Verifica que el disco esté conectado y visible en "Este equipo"
+- Si es un disco nuevo, formatealo primero (NTFS recomendado)
+- Reconecta el disco y vuelve a ejecutar
+
+### Backup lento
+
+- Usa puerto USB 3.0 (no 2.0) para mejor velocidad
+- El primer backup es más lento (copia todo), los siguientes son más rápidos
+- Cierra programas que puedan estar usando archivos
+
+### Advertencias durante backup
+
+Es normal ver advertencias por archivos en uso o con permisos especiales. El script:
+- Reintenta automáticamente (1 vez)
+- Omite archivos problemáticos sin detener el proceso
+- Registra todo en el log para revisión
+
+## 💡 Ejemplos
+
+### Ejemplo 1: Un solo disco externo
+
+```
+Detectando discos externos...
+
+[1] D:\ - MiBackup
+    Modelo: SAMSUNG HD154UI
+    Conexión: USB | Tipo: HDD
+    Tamaño Total: 1500.30 GB
+    Espacio Libre: 1398.02 GB (93.2% disponible)
+    ✓ DISCO EXTERNO DETECTADO
+
+✓ Se detectó un solo disco externo. Seleccionándolo automáticamente...
+
+Se creará el nuevo backup:
+  → DESKTOP_Backup001
+```
+
+### Ejemplo 2: Múltiples discos
+
+```
+[1] D:\ - USB_32GB
+    Espacio Libre: 15.5 GB
+    ✓ DISCO EXTERNO DETECTADO
+
+[2] E:\ - HDD_2TB
+    Espacio Libre: 1500.00 GB
+    ✓ DISCO EXTERNO DETECTADO
+
+Selecciona el disco para el backup (1-2) o 'Q' para salir: 2
+```
+
+### Ejemplo 3: Backups existentes
+
+```
+Backups existentes en este disco:
+────────────────────────────────────────────
+  • DESKTOP_Backup001 - 28/09/2025 10:00 [ESTA PC]
+  • DESKTOP_Backup002 - 29/09/2025 21:08 [ESTA PC]
+  • LAPTOP_Backup003 - 30/09/2025 14:30
+────────────────────────────────────────────
+
+Se creará el nuevo backup:
+  → DESKTOP_Backup004
+```
+
+## 🤝 Contribuir
+
+Las contribuciones son bienvenidas:
+
+1. Fork el proyecto
+2. Crea un branch (`git checkout -b feature/nueva-feature`)
+3. Commit cambios (`git commit -m 'Añade nueva feature'`)
+4. Push al branch (`git push origin feature/nueva-feature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT - ver [LICENSE](LICENSE) para más detalles.
+
+## 🔗 Enlaces
+
+- [Documentación PowerShell](https://docs.microsoft.com/powershell/)
+- [Robocopy Docs](https://docs.microsoft.com/windows-server/administration/windows-commands/robocopy)
 
 ---
 
-**💡 Tip**: El script NO elimina archivos del backup si los borras del origen, protegiendo contra eliminaciones accidentales.
+**⭐ Si te resulta útil, dale una estrella al repositorio**
