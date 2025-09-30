@@ -45,9 +45,9 @@ Este repositorio contiene un script de **PowerShell** para realizar backups comp
 
 2. Ejecutar el script con permisos:
 
-   ```powershell
-   powershell -ExecutionPolicy Bypass -File .\backup.ps1
-   ```
+```powershell
+  powershell -ExecutionPolicy Bypass -File .\backup.ps1
+```
 
 4. El script detectará automáticamente la unidad externa:
 
