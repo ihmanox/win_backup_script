@@ -98,11 +98,3 @@ Si deseas mejorar el script o añadir funcionalidades, por favor haz un fork y c
 
 Este proyecto está bajo la licencia MIT. Puedes usarlo y modificarlo libremente.
 
-```
-
----
-
-Si quieres, puedo también crear un **README más visual con emojis y secciones de “Tips”** para que quede **estilo GitHub profesional y moderno**.  
-
-¿Quieres que haga esa versión también?
-```
