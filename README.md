@@ -35,18 +35,15 @@ Este repositorio contiene un script de **PowerShell** para realizar backups comp
 - Disco externo conectado con suficiente espacio  
 
 ---
-
 ## 📂 Uso
 
 1. Abrir **PowerShell como administrador**:
-   - Pulsar `Inicio` → escribir `PowerShell` → clic derecho → **Ejecutar como administrador**  
 
-2. Cambiar al directorio donde se encuentra el script (normalmente el Escritorio):
-   ```powershell
+````powershell
    cd $env:USERPROFILE\Desktop
 ````
 
-3. Ejecutar el script con permisos:
+2. Ejecutar el script con permisos:
 
    ```powershell
    powershell -ExecutionPolicy Bypass -File .\backup.ps1
