@@ -1,10 +1,3 @@
-¡Perfecto! 😄 Te preparo un **README completo y profesional** listo para GitHub, incluyendo descripción, requisitos, instrucciones de uso y los comandos exactos que vimos para ejecutarlo.
-
----
-
-# README.md
-
-````markdown
 # Backup PowerShell Script
 
 Este repositorio contiene un script de **PowerShell** para realizar backups completos de los perfiles de usuario de Windows hacia un disco externo (USB, SSD, HDD). El script crea carpetas de destino con nomenclatura **`<NombreEquipo>_backupXXX`**, detecta automáticamente unidades externas y genera un log detallado del proceso.
