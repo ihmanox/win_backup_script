@@ -1,8 +1,6 @@
 # Windows Backup PowerShell Script
 
-<div align="center">
-# Windows Backup PowerShell Script
-</div>
+<h1 style="text-align:center;">Windows Backup PowerShell Script</h1>
 
 
 Este repositorio contiene un script de **PowerShell** para realizar backups completos de los perfiles de usuario de Windows hacia un disco externo (USB, SSD, HDD). El script crea carpetas de destino con nomenclatura **`<NombreEquipo>_backupXXX`**, detecta automáticamente unidades externas y genera un log detallado del proceso.
