@@ -1,5 +1,6 @@
 # ===============================
 # Script: backup.ps1
+# Windows Backup Zip Version
 # Autor: Ihmanox
 # Descripción:
 #   Respaldar carpetas de usuario a un disco externo
