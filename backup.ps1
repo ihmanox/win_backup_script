@@ -1,6 +1,6 @@
 # ===============================
 # Script: backup.ps1
-# Autor: Ihmanox
+# Autor: Ihmanox 
 # Descripción:
 #   Respaldar carpetas de usuario a un disco externo
 #   con nomenclatura <PCNAME>_backup001 secuencial
@@ -85,8 +85,9 @@ $LogContent = "=== Backup ejecutado el $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
 
 # --- 5. Respaldar todos los usuarios ---
 $UsersRoot = "C:\Users"
+$ExcludedUsers = @("All Users", "Default", "Default User", "Public", "defaultuser0", "DefaultAppPool", "WDAGUtilityAccount")
 $UserProfiles = Get-ChildItem -Path $UsersRoot -Directory | Where-Object {
-    $_.Name -notin @("All Users", "Default", "Default User", "Public")
+    $_.Name -notin $ExcludedUsers
 }
 
 foreach ($User in $UserProfiles) {
@@ -101,13 +102,37 @@ foreach ($User in $UserProfiles) {
         if (Test-Path $Source) {
             Write-Host "Respaldando: $Source ..."
             try {
-                Copy-Item -Path $Source -Destination $Target -Recurse -Force -ErrorAction Stop
-                Write-Host "Completado: $Folder"
-                $LogContent += "`n[OK] Respaldado: $Source"
+                # Crear carpeta destino si no existe
+                $null = New-Item -ItemType Directory -Path $Target -Force -ErrorAction SilentlyContinue
+
+                # Ejecutar robocopy
+                $robocopyCmd = @(
+                    "`"$Source`"",
+                    "`"$Target`"",
+                    "/E",         # Copiar subcarpetas, incluyendo vacías
+                    "/ZB",        # Modo reiniciable + respaldo
+                    "/COPYALL",   # Copiar atributos completos
+                    "/R:2",       # Reintentar 2 veces si falla
+                    "/W:5",       # Esperar 5 segundos entre reintentos
+                    "/NFL",       # No listar archivos
+                    "/NDL",       # No listar carpetas
+                    "/NP"         # No porcentaje
+                )
+
+                robocopy @robocopyCmd | Out-Null
+                $exitCode = $LASTEXITCODE
+
+                if ($exitCode -le 3) {
+                    Write-Host "Completado: $Folder"
+                    $LogContent += "`n[OK] Respaldado: $Source"
+                } else {
+                    Write-Host "Error al respaldar: $Folder (robocopy code: $exitCode)"
+                    $LogContent += "`n[ERROR] Falló respaldo: $Source - robocopy code: $exitCode"
+                }
             }
             catch {
-                Write-Host "Error al respaldar: $Folder - $($_.Exception.Message)"
-                $LogContent += "`n[ERROR] Falló respaldo: $Source - $($_.Exception.Message)"
+                Write-Host "Error inesperado: $($_.Exception.Message)"
+                $LogContent += "`n[ERROR] Excepción: $Source - $($_.Exception.Message)"
             }
         }
         else {
@@ -120,5 +145,3 @@ foreach ($User in $UserProfiles) {
 # --- 6. Guardar log ---
 $LogContent | Out-File -FilePath $LogFile -Encoding UTF8
 Write-Host "`nRespaldo completado. Revisa el log en: $LogFile"
-
-
