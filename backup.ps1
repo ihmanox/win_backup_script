@@ -4,6 +4,10 @@
 # Descripción:
 #   Respaldar carpetas de usuario a un disco externo
 #   con nomenclatura <PCNAME>_backup001 secuencial
+
+# Quick execution Commands:
+# Set-Location "$env:USERPROFILE\Desktop"
+# powershell -ExecutionPolicy Bypass -File .\backup.ps1
 # ===============================
 
 # --- 1. Detectar discos externos (removibles o fijos distintos a C:) ---
