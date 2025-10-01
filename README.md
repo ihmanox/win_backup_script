@@ -42,7 +42,7 @@ Este repositorio contiene un script de **PowerShell** para realizar backups comp
 1. Abrir **PowerShell como administrador**:
 
 ````powershell
-   cd $env:USERPROFILE\Desktop
+   cd "$env:USERPROFILE\Desktop"
 ````
 
 2. Ejecutar el script con permisos:
